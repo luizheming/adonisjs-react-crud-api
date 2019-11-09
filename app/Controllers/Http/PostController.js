@@ -33,7 +33,7 @@ class PostController {
    */
   async store ({ request, response }) {
     const { content } = request.all()
-    const post = await Post.create(content)
+    const post = await Post.create({ content })
     return post
   }
 
