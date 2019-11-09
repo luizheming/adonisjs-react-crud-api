@@ -2,7 +2,9 @@
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
+
+const Post = use('App/Models/Post')
 
 /**
  * Resourceful controller for interacting with posts
@@ -18,18 +20,7 @@ class PostController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-  }
-
-  /**
-   * Render a form to be used for creating a new post.
-   * GET posts/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    return await Post.all()
   }
 
   /**
@@ -41,6 +32,9 @@ class PostController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+    const { content } = request.all()
+    const post = await Post.create(content)
+    return post
   }
 
   /**
@@ -53,6 +47,7 @@ class PostController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
+    return await Post.find(params.id)
   }
 
   /**
@@ -76,6 +71,14 @@ class PostController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
+    const { content } = request.all()
+    const post = Post.find(params.id)
+
+    post.merge(content)
+    
+    await post.save
+
+    return post
   }
 
   /**
@@ -87,6 +90,8 @@ class PostController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
+    const post = Post.find(params.id)
+    await post.delete()
   }
 }
 
